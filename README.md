@@ -29,7 +29,7 @@ Using minikube you can simply activate it with command below.
 minikube addons enable ingress
 ```
 
-![](https://www.dropbox.com/s/zut43cpa3r5iy1i/ingress_install.PNG?dl=0)
+![ingress install](https://www.dropbox.com/s/zut43cpa3r5iy1i/ingress_install.PNG?dl=0)
 
 Other methods are explained in 
 <strong> [NGINX Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/) </strong>
