@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+spec:
+  rules:
+    - host: service
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp-service
+                port:
+                  number: 8000

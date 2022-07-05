@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  labels:
+    app: webapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp-label
+  template:
+    metadata:
+      labels:
+        app: webapp-label
+    spec:
+      containers:
+      - name: webapp-label
+        image: lavalera97/k8s_learning:v1.0
+        ports:
+        - containerPort: 8000
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  selector:
+    app: webapp-label
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
