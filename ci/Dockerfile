@@ -11,12 +11,12 @@ EXPOSE 8000
 RUN useradd app
 
 WORKDIR /app
-COPY ./poetry.lock ./pyproject.toml /app/
+COPY ../poetry.lock ../pyproject.toml /app/
 
 RUN poetry config virtualenvs.create false \
     && poetry install --no-dev
 
-COPY ./src /app
+COPY ../src /app
 
 USER app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

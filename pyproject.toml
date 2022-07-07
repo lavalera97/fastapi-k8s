@@ -7,6 +7,13 @@ authors = ["Valery Semenov <v.semenov@ylab.io>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 fastapi = {extras = ["all"], version = "^0.78.0"}
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+alembic = "^1.8.0"
+SQLAlchemy = "^1.4.39"
+databases = "^0.6.0"
+asyncpg = "^0.25.0"
+psycopg2-binary = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 
