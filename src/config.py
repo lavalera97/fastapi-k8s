@@ -4,6 +4,10 @@ from pydantic import BaseSettings, PostgresDsn, validator
 
 class EnvSettings(BaseSettings):
     """Main settings"""
+    # Token data
+    SECRET_KEY: str = "most secret key ever"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     # Database settings
     DATABASE_USERNAME: Optional[str] = 'postgres'
     DATABASE_PASSWORD: Optional[str] = 'postgres'
