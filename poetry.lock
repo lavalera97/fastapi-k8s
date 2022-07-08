@@ -604,7 +604,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "196b05ad19980fcb7003e58acf93acba043767c2c5d30a8c8cf4e24f71587c6b"
+content-hash = "b2a6a6fd42bb59f67ed532de14d50f5ffa5b891ebbd5fd88b19b1081dcb36918"
 
 [metadata.files]
 alembic = [
