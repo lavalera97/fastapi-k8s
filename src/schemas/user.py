@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, constr
 
 
 class UserBaseModel(BaseModel):
@@ -30,8 +30,10 @@ class UserRequestModel(UserBaseModel):
         return value
 
 
-class UserUpdateModel(UserRequestModel):
-    pass
+class UserUpdateModel(UserBaseModel):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    password: constr(min_length=8)
 
 
 class UserResponseModel(UserBaseModel):

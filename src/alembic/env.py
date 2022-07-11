@@ -34,7 +34,6 @@ def import_all_subpackages(module, into_package=__package__):
         pkgpath = module.__path__._path[0]
     imported_modules = {}
     for (module_loader, name, is_package) in pkgutil.iter_modules([pkgpath]):
-        print(f"Load models from {module.__name__}.{name}")
         imported_modules[name] = importlib.import_module(
             module.__name__ + '.' + name, into_package)
     return imported_modules

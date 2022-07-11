@@ -9,7 +9,7 @@ from passlib.context import CryptContext
 from config import settings
 from crud.user import user_crud
 from schemas.auth import TokenData
-from schemas.user import UserFullData, UserResponseModel
+from schemas.user import UserFullData
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/user/token")
@@ -54,10 +54,10 @@ async def get_current_user(
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = await user_crud.get_by_data(username=token_data.username)
-    if user is None:
+    user = await user_crud.get_by_data(params={"username": token_data.username})
+    if not user:
         raise credentials_exception
-    return UserFullData.parse_obj(user[0])
+    return user[0]
 
 
 async def get_active_user(
@@ -65,7 +65,7 @@ async def get_active_user(
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
-    return UserResponseModel.parse_obj(current_user)
+    return current_user
 
 
 async def get_superuser(
