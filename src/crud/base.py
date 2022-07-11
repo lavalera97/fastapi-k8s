@@ -14,7 +14,7 @@ class BaseCRUD:
         self.model = model
         self.result_model = result_model
 
-    def _construct_by_field_clause(self, data: dict):
+    def _refactor_data_to_expression(self, data: dict):
         expressions = []
         negation_clause_mark = '__not'
         for field_name, field_value in data.items():
@@ -28,7 +28,15 @@ class BaseCRUD:
                 else:
                     clause_operator = operator.eq
                 expressions.append(clause_operator(getattr(self.model, field_name), field_value))
+        return expressions
+
+    def _and_clause_data(self, data: dict):
+        expressions = self._refactor_data_to_expression(data)
         return sa.and_(*expressions)
+
+    def _or_clause_data(self, data: dict):
+        expressions = self._refactor_data_to_expression(data)
+        return sa.or_(*expressions)
 
     async def get(self, item_id: Any):
         query = sa.select(self.model).where(self.model.id == item_id)
@@ -37,9 +45,14 @@ class BaseCRUD:
             return None
         return self.result_model.parse_obj(result)
 
-    async def get_by_data(self, **kwargs):
-        where = [self._construct_by_field_clause(kwargs)]
-        query = sa.select(self.model).where(sa.and_(*where))
+    async def get_by_data(self, params: dict = None, or_clause_data: dict = None, limit=None):
+        query = sa.select(self.model)
+        if params:
+            query = query.where(sa.and_(*[self._and_clause_data(params)]))
+        if or_clause_data:
+            query = query.where(sa.or_(*[self._or_clause_data(or_clause_data)]))
+        if limit:
+            query = query.limit(limit)
         result = await self.database.fetch_all(query=query)
         return [self.result_model.parse_obj(item) for item in result]
 
