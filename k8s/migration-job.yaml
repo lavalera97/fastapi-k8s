@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alembic-migration-job
+spec:
+  backoffLimit: 5
+  activeDeadlineSeconds: 120
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: check-webapp-ready
+          image: busybox:latest
+          command: ['sh', '-c',
+                    'until nc -vz webapp-service 8000; do echo "Waiting for webapp service"; sleep 1; done;' ]
+      containers:
+        - name: alembic-migration-job
+          image: lavalera97/k8s_learning:v1.1
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "-c", "alembic upgrade head"]
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-db
+                  name: postgres-secret-creds
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-user
+                  name: postgres-secret-creds
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: postgres-password
+                  name: postgres-secret-creds
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: postgres_host
+                  name: postgres-config
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: postgres_port
+                  name: postgres-config
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: secret_key
+                  name: webapp-secret-creds
+            - name: ALGORITHM
+              valueFrom:
+                secretKeyRef:
+                  key: algorithm
+                  name: webapp-secret-creds
+            - name: ACCESS_TOKEN_EXPIRE_MINUTES
+              valueFrom:
+                secretKeyRef:
+                  key: token_expiration_time
+                  name: webapp-secret-creds

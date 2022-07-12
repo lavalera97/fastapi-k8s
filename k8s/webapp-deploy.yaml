@@ -14,9 +14,14 @@ spec:
       labels:
         app: webapp-label
     spec:
+      initContainers:
+        - name: check-database-ready
+          image: busybox:latest
+          command: [ 'sh', '-c',
+                     'until nc -vz postgres-service 5432; do echo "Waiting for webapp service"; sleep 1; done;' ]
       containers:
       - name: webapp-label
-        image: lavalera97/k8s_learning:v1.0
+        image: lavalera97/k8s_learning:v1.1
         ports:
         - containerPort: 8000
         livenessProbe:
@@ -31,12 +36,54 @@ spec:
             port: 8000
           initialDelaySeconds: 5
           periodSeconds: 15
+        env:
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                key: postgres-db
+                name: postgres-secret-creds
+          - name: DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: postgres-user
+                name: postgres-secret-creds
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: postgres-password
+                name: postgres-secret-creds
+          - name: DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                key: postgres_host
+                name: postgres-config
+          - name: DATABASE_PORT
+            valueFrom:
+              configMapKeyRef:
+                key: postgres_port
+                name: postgres-config
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: secret_key
+                name: webapp-secret-creds
+          - name: ALGORITHM
+            valueFrom:
+              secretKeyRef:
+                key: algorithm
+                name: webapp-secret-creds
+          - name: ACCESS_TOKEN_EXPIRE_MINUTES
+            valueFrom:
+              secretKeyRef:
+                key: token_expiration_time
+                name: webapp-secret-creds
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: webapp-service
 spec:
+  type: NodePort
   selector:
     app: webapp-label
   ports:

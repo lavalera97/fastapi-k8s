@@ -6,10 +6,10 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=lego
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
+      - POSTGRES_DB=kubertest
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_PASSWORD=verystrongpassword
+      - POSTGRES_HOST=testdb
       - POSTGRES_PORT=5432
   web:
     build:
@@ -22,10 +22,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_NAME=lego
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_HOST=db
+      - DATABASE_NAME=kubertest
+      - DATABASE_USERNAME=postgresuser
+      - DATABASE_PASSWORD=verystrongpassword
+      - DATABASE_HOST=testdb
       - DATABASE_PORT=5432
       - SECRET_KEY=secretkey
       - ALGORITHM=HS256
