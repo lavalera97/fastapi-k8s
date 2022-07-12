@@ -2,20 +2,26 @@
 
 ### Description
 
-This repo contains simple FastAPI project with one route ```/health```.
+This repo contains simple FastAPI project with route ```/health``` to check status of server and ```oauth``` user routes with connected ```Postgresql``` database.
 
 It's dockerized and contains basic manifests for k8s:
 
-* *Deployment* - runs multiple replicas of application and automatically replaces any instances that fail or become 
+* *[Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)* - runs multiple replicas of application and automatically replaces any instances that fail or become 
   unresponsive.
 
-* *Service* - defines a logical set of pods and a policy by which to access them. As Pods have different internal IP 
+* *[Service](https://kubernetes.io/docs/concepts/services-networking/service/)* - defines a logical set of pods, and a policy by which to access them. As Pods have different internal IP 
   address that can change, we use service to get a stable IP address that lasts for the life of itself.
   
-* *Ingress* - exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.It allows us 
+* *[Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)* - exposes HTTP and HTTPS routes from outside the cluster to services within the cluster.It allows us 
   to consolidate our routing rules into a single resource. 
   
-> As we don't use multiple services, our ingress contains only one host and http path.
+* *[Persistent Volume](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)* - "physical" volume on the host machine that stores your persistent data
+
+* *[Persistent Volume Claim](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims)* - request for the platform to get a PV
+
+* *[Job](https://kubernetes.io/docs/concepts/workloads/controllers/job/)* - creates pod to perform a finite task (pod terminates at the end)
+  
+> As we use one service for our webapp, ingress contains only one host and http path.
 
 ### Instructions 
 
@@ -39,22 +45,22 @@ Other methods are explained in
 #### Apply k8s manifests
 
 ```
-kubectl apply -f k8s/
+k8s_deploy.sh
 ```
 
-<div style="text-align: center">
-<img src="https://user-images.githubusercontent.com/80529021/177394747-60922217-1e4e-407c-838d-1c705669d10b.png" alt="k8s apply"  width="95%"/>
-</div>
+It will create all content in kubernetes.
 
 #### Allow local access to host "service" in ingress
 
-As we are using "service" as dns name, we have to add it to ```etc/hosts``` file with ip mentioned in ingress 
+As we are using "service" as dns name, we have to add it to ```etc/hosts``` file with ip mentioned in ingress
 
 ```
 kubectl get ing
 ```
 
 ![ingress-webapp](https://user-images.githubusercontent.com/80529021/177397596-233ccadc-7a8e-4042-ba8b-3c56238f907d.PNG)
+
+If address shows as <>, you have to wait when all services start. 
 
 >  Using minikube
 >```
@@ -83,8 +89,14 @@ curl --location --request GET 'http://service/health'
 > http://service/health
 
 
-* Make request from swagger
+* Make any request from swagger
 
 > http://service/docs
 
-![webapp-swagger](https://user-images.githubusercontent.com/80529021/177400881-ce95cb8d-0b44-4219-8613-34cc3e9c9339.PNG)
+![webapp-swagger](https://user-images.githubusercontent.com/80529021/178579411-a46bb7b8-2263-4ad6-8a02-ffc39dec6eb6.png)
+
+#### Delete all k8s manifests
+
+```
+k8s_deploy.sh
+```
