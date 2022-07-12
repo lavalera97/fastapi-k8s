@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    name: postgres-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: postgres-db
+  template:
+    metadata:
+      labels:
+        service: postgres-db
+    spec:
+      containers:
+        - image: postgres:13
+          imagePullPolicy: Always
+          name: postgresdb
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-creds
+                  key: postgres-db
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-creds
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-creds
+                  key: postgres-password
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-volume-mount
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-volume-mount
+          persistentVolumeClaim:
+            claimName: postgres-db-pvc
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  type: NodePort
+  selector:
+    service: postgres-db
+  ports:
+    - name: tcp-port
+      port: 5432
+      targetPort: 5432
+      protocol: TCP

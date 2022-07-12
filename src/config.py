@@ -13,7 +13,7 @@ class EnvSettings(BaseSettings):
     DATABASE_PASSWORD: Optional[str] = 'postgres'
     DATABASE_HOST: Optional[str] = 'localhost'
     DATABASE_PORT: Optional[int] = 5432
-    DATABASE_NAME: Optional[str] = 'lego'
+    DATABASE_NAME: Optional[str] = 'kubertest'
     DB_URI: Optional[PostgresDsn] = None
 
     @validator("DB_URI", pre=True)
