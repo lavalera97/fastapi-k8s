@@ -98,5 +98,5 @@ curl --location --request GET 'http://service/health'
 #### Delete all k8s manifests
 
 ```
-k8s_deploy.sh
+k8s_delete.sh
 ```
